@@ -1,136 +1,85 @@
-import 'dart:convert';
+
 
 import 'package:flutter/material.dart';
+import 'package:flutter_demo/Pages/Group/group.dart';
+import 'package:flutter_demo/Pages/Home/home.dart';
+import 'package:flutter_demo/Pages/Mall/mall.dart';
+import 'package:flutter_demo/Pages/Profile/profile.dart';
+import 'package:flutter_demo/Pages/Subject/subject.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(myApp());
 }
 
-class MyApp extends StatelessWidget {
+class myApp extends StatelessWidget {
 
-  // This widget is the root of your application.
+  final color_theme = Colors.green;
+  
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'TextField Demo',
-      home:  MyHomePage(),
+      title: "豆瓣",
+      theme: ThemeData(
+        primarySwatch: color_theme,
+        iconTheme: IconThemeData(color: color_theme),
+        highlightColor:  Colors.transparent,
+        splashColor: Colors.transparent
+      ),
+      home: MyStackPage(),
     );
   }
 }
 
-class MyHomePage extends StatelessWidget {
+
+class MyStackPage extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return MyStackPageState();
+  }
+
+}
+class MyStackPageState extends State<MyStackPage> {
+  int _currentIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("我是标题"),
+
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        type: BottomNavigationBarType.fixed,
+        items: [
+          createItem("home", "首页"),
+          createItem("subject", "书影音"),
+          createItem("group", "小组"),
+          createItem("mall", "市集"),
+          createItem("profile", "我的"),
+        ],
+        onTap: (currentIndex) {
+          setState(() {
+            _currentIndex = currentIndex;
+          });
+        },
       ),
-      body: contentWidget(),
+      body: IndexedStack(
+        index: _currentIndex,
+        children: [
+          home(),
+          subject(),
+          group(),
+          mall(),
+          profile()
+        ],
+      ),
     );
   }
 }
 
 
 
-
-/// 继承自statefulWidget必须写state，因为在state去维护状态的变化
-/// 整块内容的widget
-class contentWidget extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() {
-    return _contentState();
-  }
+BottomNavigationBarItem createItem(String iconName, String title) {
+  return  BottomNavigationBarItem(
+      icon: Image.asset("assets/images/tabbar/$iconName.png",width: 32.0,),
+      activeIcon: Image.asset("assets/images/tabbar/${iconName}_active.png",width: 32.0,),
+      label: "");
 }
-/// 这里用下划线的原因是因为在dart中私有化一个属性是用下划线
-class _contentState extends State<contentWidget> {
-  @override
-  Widget build(BuildContext context) {
-    return loginWidget();
-  }
-}
-
-/// 登录的widget
-class loginWidget extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() {
-    return _loginState();
-  }
-}
-
-class _loginState extends State<loginWidget> {
-
-  final registerFormkey = GlobalKey<FormState>();
-
-  String username = "";
-  String password = "";
-
-  void saveRegisterForm() {
-
-    if (username.length == 0 || username == "") {
-      print("当前输入的用户名为空$username");
-      return;
-    }
-
-    if (password.length == 0 || password == "") {
-      print("当前输入的密码为空$password");
-      return;
-    }
-
-
-    registerFormkey.currentState?.save();
-    registerFormkey.currentState?.validate();
-    print("当前输入用户名是:$username, 密码是:$password");
-
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(20.0),
-      child: Form(
-          child: Column( //child:这里只能存放一个textField
-            key: registerFormkey,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [ //children:这里就可以存放多个textField
-
-              TextFormField( //用户名的textField
-                decoration: const InputDecoration( //这里存放着textField中的icon
-                  icon: Icon(Icons.people),
-                  hintText: "请输入用户名或手机号码",
-                ),
-                onChanged: (value) {
-                  this.username = value ?? "";
-                  print("$value");
-                },
-              ),
-
-              SizedBox(height: 20,),
-
-              TextFormField( //密码的TextField
-                obscureText: true,
-                decoration: const InputDecoration(
-                  icon: Icon(Icons.lock),
-                  hintText: "请输入密码",
-                  suffixIcon: ImageIcon(image)
-                ),
-                onChanged: (value) {
-                  this.password = value ?? "";
-                  print("$value");
-                },
-              ),
-
-              SizedBox(height: 20,),
-
-              Container(
-                width: double.infinity,
-                height: 44,
-                child: ElevatedButton(onPressed: saveRegisterForm,
-                  child: Text("注册",style: TextStyle(fontSize: 20,color: Colors.white),),
-                ),
-              ),
-            ],
-      )),
-    );
-  }
-}
-
