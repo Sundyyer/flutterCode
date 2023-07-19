@@ -45,7 +45,7 @@ class MyStackPageState extends State<MyStackPage> {
   Widget build(BuildContext context) {
     return Scaffold(
 
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: BottomNavigationBar( //创建对应的tabbar
         currentIndex: _currentIndex,
         type: BottomNavigationBarType.fixed,
         items: [
@@ -61,7 +61,8 @@ class MyStackPageState extends State<MyStackPage> {
           });
         },
       ),
-      body: IndexedStack(
+
+      body: IndexedStack( //包装tabbar对应的页面
         index: _currentIndex,
         children: [
           home(),
@@ -76,10 +77,10 @@ class MyStackPageState extends State<MyStackPage> {
 }
 
 
-
+/// 封装tabbar
 BottomNavigationBarItem createItem(String iconName, String title) {
   return  BottomNavigationBarItem(
       icon: Image.asset("assets/images/tabbar/$iconName.png",width: 32.0,),
       activeIcon: Image.asset("assets/images/tabbar/${iconName}_active.png",width: 32.0,),
-      label: "");
+      label: title);
 }
