@@ -3,57 +3,72 @@ import 'package:flutter_demo/Network/http_request.dart';
 import 'package:flutter_demo/Network/http_config.dart';
 import 'Model/home_model.dart';
 
-class home extends StatelessWidget {
+
+
+class home extends StatefulWidget {
   const home({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("首页"),
-      ),
-      body: HomeBoby(),
-    );
-  }
+  State<home> createState() => _homeState();
 }
 
-class HomeBoby extends StatefulWidget {
-  const HomeBoby({super.key});
+class _homeState extends State<home> {
 
-  @override
-  State<HomeBoby> createState() => _HomeBobyState();
-}
+  late final home_model _homeModel;
 
-class _HomeBobyState extends State<HomeBoby> {
-
-  late home_model _homeModel;
-
+  // late final TabController _tabController;
+  // List tabs = ["新闻", "历史", "图片"];
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-
-     HttpRequest.request(BASEURL).then((value) {
-       // final data = value.data["data"];
-       setState(() {
-         _homeModel = value;
-       });
-
-     });
+    HttpRequest.request(BASEURL).then((value) {
+      setState(() {
+        _homeModel = value;
+        // _tabController = TabController(length: _homeModel.result.data.length, vsync: this);
+      });
+    });
   }
+
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: ListView.builder(
-        itemCount: _homeModel.result.data.length,
-        itemBuilder: (BuildContext context, int index) {
-        return ListTile(
-          leading: Image.network(_homeModel.result.data[index].thumbnailPicS, width: 50,),
-          title: Text(_homeModel.result.data[index].title),
-        );
-      }),
+    final list_data = _homeModel.result.data;
+    List tabs = ["头条", "历史", "图片"];
+
+    return DefaultTabController(
+      length: tabs.length,
+      child: Scaffold(
+        appBar: AppBar(
+          title: TabBar(
+            tabs: tabs.map((e) => Text(e)).toList(),
+            indicatorSize: TabBarIndicatorSize.label,
+            labelStyle: const TextStyle(fontSize: 20),),
+        ),
+        body: TabBarView(children: tabs.map((e) {
+          return KeepAlive(
+            keepAlive: true,
+            child: ListView.builder(
+                itemCount: list_data.length,
+                itemExtent: 100.0,
+                itemBuilder: (BuildContext context, int index) {
+                  return Column(
+                    children: [
+                      Text(list_data[index].title),
+
+                    ],
+                  );
+                }
+            ),
+          );
+        }).toList()),
+      ),
     );
   }
+
 }
+
+
+
+

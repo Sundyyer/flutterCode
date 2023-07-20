@@ -64,7 +64,7 @@ class Datum {
   String uniquekey;
   String title;
   DateTime date;
-  Category category;
+  String category;
   String authorName;
   String url;
   String thumbnailPicS;
@@ -89,7 +89,7 @@ class Datum {
     uniquekey: json["uniquekey"],
     title: json["title"],
     date: DateTime.parse(json["date"]),
-    category: categoryValues.map[json["category"]]!,
+    category: json["category"],
     authorName: json["author_name"],
     url: json["url"],
     thumbnailPicS: json["thumbnail_pic_s"],
